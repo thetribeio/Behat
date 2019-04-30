@@ -24,53 +24,27 @@ final class ConfigurationLoader
      * @var null|string
      */
     private $configurationPath;
-    /**
-     * @var null|string
-     */
-    private $environmentVariable;
+
     /**
      * @var Boolean
      */
     private $profileFound;
+
     /**
      * @var array
      */
     private $debugInformation = array(
-        'environment_variable_name' => 'none',
-        'environment_variable_content' => 'none',
         'configuration_file_path' => 'none'
     );
 
     /**
      * Constructs reader.
      *
-     * @param string $environmentVariableName Environment variable name
      * @param string $configurationPath       Configuration file path
      */
-    public function __construct($environmentVariableName = null, $configurationPath = null)
+    public function __construct($configurationPath = null)
     {
-        $this->environmentVariable = $environmentVariableName;
         $this->configurationPath = $configurationPath;
-    }
-
-    /**
-     * Sets environment variable name.
-     *
-     * @param null|string $variable
-     */
-    public function setEnvironmentVariableName($variable)
-    {
-        $this->environmentVariable = $variable;
-    }
-
-    /**
-     * Returns environment variable name.
-     *
-     * @return null|string
-     */
-    public function getEnvironmentVariableName()
-    {
-        return $this->environmentVariable;
     }
 
     /**
@@ -107,11 +81,6 @@ final class ConfigurationLoader
         $configs = array();
         $this->profileFound = false;
 
-        // first is ENV config
-        foreach ($this->loadEnvironmentConfiguration() as $config) {
-            $configs[] = $config;
-        }
-
         // second is file configuration (if there is some)
         if ($this->configurationPath) {
             $this->debugInformation['configuration_file_path'] = $this->configurationPath;
@@ -140,42 +109,6 @@ final class ConfigurationLoader
     public function debugInformation()
     {
         return $this->debugInformation;
-    }
-
-    /**
-     * Loads information from environment variable.
-     *
-     * @return array
-     *
-     * @throws ConfigurationLoadingException If environment variable environment var is set to invalid JSON
-     */
-    protected function loadEnvironmentConfiguration()
-    {
-        $configs = array();
-
-        if (!$this->environmentVariable) {
-            return $configs;
-        }
-
-        $this->debugInformation['environment_variable_name'] = $this->environmentVariable;
-
-        if ($envConfig = getenv($this->environmentVariable)) {
-            $config = @json_decode($envConfig, true);
-
-            $this->debugInformation['environment_variable_content'] = $envConfig;
-
-            if (!$config) {
-                throw new ConfigurationLoadingException(sprintf(
-                    'Environment variable `%s` should contain a valid JSON, but it is set to `%s`.',
-                    $this->environmentVariable,
-                    $envConfig
-                ));
-            }
-
-            $configs[] = $config;
-        }
-
-        return $configs;
     }
 
     /**
