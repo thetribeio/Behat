@@ -100,14 +100,6 @@ final class ApplicationFactory extends BaseFactory
     /**
      * {@inheritdoc}
      */
-    protected function getEnvironmentVariableName()
-    {
-        return 'BEHAT_PARAMS';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function getConfigPath()
     {
         $cwd = rtrim(getcwd(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;

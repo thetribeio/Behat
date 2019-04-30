@@ -46,13 +46,6 @@ abstract class ApplicationFactory
     abstract protected function getDefaultExtensions();
 
     /**
-     * Returns the name of configuration environment variable.
-     *
-     * @return string
-     */
-    abstract protected function getEnvironmentVariableName();
-
-    /**
      * Returns user config path.
      *
      * @return null|string
@@ -79,7 +72,7 @@ abstract class ApplicationFactory
      */
     protected function createConfigurationLoader()
     {
-        return new ConfigurationLoader($this->getEnvironmentVariableName(), $this->getConfigPath());
+        return new ConfigurationLoader($this->getConfigPath());
     }
 
     /**
